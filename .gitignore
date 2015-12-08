@@ -1,3 +1,10 @@
+#eclipse folders and files
+/bin/
+.classpath
+.project
+.settings/
+
+#java
 *.class
 
 # Mobile Tools for Java (J2ME)
