@@ -1,8 +1,8 @@
 #eclipse folders and files
 /bin/
 .classpath
-.project
-.settings/
+#.project
+#.settings/
 
 #java
 *.class
