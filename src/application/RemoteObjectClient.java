@@ -21,9 +21,11 @@ public class RemoteObjectClient {
 		RemoteObjectProxy remoteObjectProxy = (RemoteObjectProxy) namingService
 				.lookup("RemoteObject");
 
+		System.out.println("objeto encontrado no servidor de nomes na porta "+ remoteObjectProxy.getPort() +" e host: " + remoteObjectProxy.getHost());
+		
 		// invoke calculator
 		//calculatorProxy.add(1, 3);
-
+		System.out.println("Esperando resultado...");
 		System.out.println("Resultado da operação: "+remoteObjectProxy.doSomeThing());
 	}
 }

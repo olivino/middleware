@@ -25,8 +25,11 @@ public class ServerRequestHandler {
 		byte [] rcvMsg = null;
 		
 		welcomeSocket = new ServerSocket(portNumber);
+		//System.out.println("Criado novo socket de boas vindas");
 		connectionSocket = welcomeSocket.accept();
-
+		//System.out.println("Cliente conectado");
+		welcomeSocket.close();
+		
 		outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 		inFromClient = new DataInputStream(connectionSocket.getInputStream());
 
@@ -46,7 +49,7 @@ public class ServerRequestHandler {
 		outToClient.flush();
 
 		connectionSocket.close();
-		welcomeSocket.close();
+		//welcomeSocket.close();
 		outToClient.close();
 		inFromClient.close();
 

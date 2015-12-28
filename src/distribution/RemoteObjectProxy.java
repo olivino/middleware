@@ -19,7 +19,7 @@ public class RemoteObjectProxy extends ClientProxy implements IRemoteObject{
 	public RemoteObjectProxy() throws UnknownHostException {
 		// TODO Auto-generated constructor stub
 		super();
-		this.host = InetAddress.getLocalHost().getHostName();
+		this.host = "localhost";//InetAddress.getLocalHost().getHostName();
 		this.port = UtilsConf.nextPortAvailable();
 	}
 	

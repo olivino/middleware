@@ -20,12 +20,12 @@ public class RemoteObjectServer {
 
 		// register calculator in Naming service
 		namingService.bind("RemoteObject", remoteObject);
-
-		// register calculator in Naming service
-		//namingService.bind("Calculator2", remoteObject);
+		
+		System.out.println("RemoteObjectServer ready...");
 		
 		// invoke Invoker
 		invoker.invoke(remoteObject);
+		
 	}
 }
 

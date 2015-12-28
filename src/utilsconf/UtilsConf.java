@@ -6,8 +6,8 @@ import java.net.ServerSocket;
 
 public class UtilsConf {
 
-	public static final int MIN_PORT_NUMBER = 8000;
-	public static final int MAX_PORT_NUMBER = 9000;
+	public static final int MIN_PORT_NUMBER = 2000;
+	public static final int MAX_PORT_NUMBER = 4000;
 
 	public static int nextPortAvailable() {
 		int p = MIN_PORT_NUMBER;
