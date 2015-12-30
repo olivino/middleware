@@ -3,33 +3,6 @@ package application;
 
 import java.io.*;
 
-/**
- * Classe que manipula a entrada e saída de dados de um programa através de
- * arquivos.<br> <br>
- *
- * Exemplo de Uso: <br> <br> <code>
- *
- * // Abre os arquivos de entrada e saída <br>
- * Arquivo io = new Arquivo("L1Q1.in", "L1Q1.out"); <br> <br>
- *
- * // Lê dados do arquivo de entrada <br>
- * String s = io.readString(); <br>
- * char c = io.readChar(); <br>
- * int i = io.readInt(); <br>
- * double d = io.readDouble(); <br> <br>
- *
- * // Grava dados no arquivo de saída <br>
- * io.print("Algoritmos"); <br>
- * io.print(35); <br>
- * io.println(2.3); <br> <br>
- *
- * // Fecha o arquivo após o uso <br>
- * io.close(); <br> </code>
- *
- * @author   Emannuel Macêdo (egm@cin.ufpe.br)
- *
- */
-
 public class Arquivo {
 
     private BufferedReader in;
