@@ -1,5 +1,8 @@
 package application;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Calendar;
@@ -13,27 +16,28 @@ import cern.jet.random.engine.RandomEngine;
 import commonservices.naming.NamingProxy;
 import distribution.RemoteObjectProxy;
 
+
 public class RemoteObjectClient {
+	
+	final static String logFilePath = "logClient.txt";
 	
 	/*Nao tem construtor*/
 	
-	//Variavei global - o define a quantidade deexecuções do programa
+	//Variavei global - o define a quantidade deexecuï¿½ï¿½es do programa
 	public static final int finalExecucao = 100;
 	
 	/*Variaveis do Calculo estatistico - Poisson */
-	RandomEngine engine = new DRand(100);
-	int lambda = 2;
-	Poisson poisson = new Poisson(lambda, engine);
+	static RandomEngine engine = new DRand(100);
+	static int lambda = 2;
+	static Poisson poisson = new Poisson(lambda, engine);
 	
 	//Variavel que calcula o tempo inicial de processamento
-	long tempInicial;
+	static long tempInicial;
+	static FileWriter log;
 	
-	//Variaveis utilizadas para a manipulacao do arquivo
-	Arquivo log = new Arquivo("C:\\Users\\Mila\\Documents\\middleware\\projetoMiddleware\\middleware\\src\\application\\logClient.txt","C:\\Users\\Mila\\Documents\\middleware\\projetoMiddleware\\middleware\\src\\application\\logClientOUT.txt");
-	
-	
+
 	/*funcao responsavel por obter o tempo em segundos do sistema*/
-	private int tempoSegundos(){
+	static private int tempoSegundos(){
 		/*Variaveis do calculo do tempo*/
 		Calendar calendar = new GregorianCalendar();
 		Date trialTime = new Date();
@@ -43,7 +47,7 @@ public class RemoteObjectClient {
 	}
 
 	//Realizando calculo do tempo de chamada
-	private int calculaTempo(){
+	static private int calculaTempo(){
 		/*Variaveis do calculo do tempo*/
 		Calendar calendar = new GregorianCalendar();
 		Date trialTime = new Date();
@@ -62,7 +66,7 @@ public class RemoteObjectClient {
 		//Fazendo o calculo da espera para o proximo elemento
 		int resultado = segundos + poissonObs;
 		
-		//Caso a soma extrapole 60 segundos, faz o uso da funçao mod
+		//Caso a soma extrapole 60 segundos, faz o uso da funï¿½ao mod
 		if(resultado > 59){
 			resultado = resultado % 59;
 		}
@@ -71,24 +75,24 @@ public class RemoteObjectClient {
 	}
 	
 	//Funcao que realiza o armazenamento dos dados no arquivo de log
-	private void escreveString (int ID, int Poisson, long tempoProc, String resultado){
-		log.println("Execucao nº: " + ID + ", Valor Poisson: " + Poisson + ", Tempo processamento: " + tempoProc + "ms, Resultado funcao: " + resultado + ".");
+	static private void escreveString (int ID, int Poisson, long tempoProc, String resultado) throws IOException{
+		//log.write("Execucao nï¿½: " + ID + ", Poisson: " + Poisson + ", Tempo processamento: " + tempoProc + "ms, Resultado funcao: " + resultado + ".\n");
 	}
 	
 	//Funcao responsavel por fechar o arquivo
-	private void terminoEscrita(){
+	static private void terminoEscrita() throws IOException{
 		log.close();
 	}
 	
-	//Funcao responsavel por inicializar o contador do tempo de processamento da função
-	private void inicioProcessamento(){
+	//Funcao responsavel por inicializar o contador do tempo de processamento da funï¿½ï¿½o
+	static private void inicioProcessamento(){
 		tempInicial = System.currentTimeMillis(); 
 	}
 	
 	/*Funcao responsavel por terminar a contagem do tempo de processamento e fazer a diferenca
-	do tempo em que começou a funçao e que terminou. O resultado desta diferença eh apresentado 
-	ao usuário.*/
-	private long finalProcessamento(){
+	do tempo em que comeï¿½ou a funï¿½ao e que terminou. O resultado desta diferenï¿½a eh apresentado 
+	ao usuï¿½rio.*/
+	static private long finalProcessamento(){
 		long tempFinal = System.currentTimeMillis();
 		long dif = (tempFinal - tempInicial);
 		return dif;
@@ -107,9 +111,6 @@ public class RemoteObjectClient {
 		// look for Calculator in Naming service
 		RemoteObjectProxy remoteObjectProxy = (RemoteObjectProxy) namingService.lookup("RemoteObject");
 
-		//Criando um objeto cliente para poder acessar as funções do cliente
-		RemoteObjectClient remoteObjectClient = new RemoteObjectClient();
-
 		//Variaveis utilizadas para armazenar os valores
 		int tempoEspera;
 		int tempoAtual;
@@ -119,34 +120,39 @@ public class RemoteObjectClient {
 		
 		//Avisando ao usuario que o processamento comecou
 		System.out.println("Iniciando processamento!");
+
+		//Variaveis utilizadas para a manipulacao do arquivo
+		
+		log = new FileWriter(logFilePath);
+		log.write("index#poissonNumber#totalTime#result\n");
 		
 		//Criando thread do cliente
 		while(contadorExecucao != finalExecucao){
 			
 			//iniciando calculo do tempo de processamento
-			remoteObjectClient.inicioProcessamento();
+			inicioProcessamento();
 			
 			//Chama a funcao doSomething
 			resultado = remoteObjectProxy.doSomeThing();
 			
 			//Terminando o calculo do processamento
-			tempoProcessamento = remoteObjectClient.finalProcessamento();
+			tempoProcessamento = finalProcessamento();
 			
 			//Calcula o tempo de chamar novamente a funcao doSomething
-			tempoEspera = remoteObjectClient.calculaTempo();
+			tempoEspera = calculaTempo();
 
 			//Verifica o tempo atual do sistema em segundos
-			tempoAtual = remoteObjectClient.tempoSegundos();
+			tempoAtual = tempoSegundos();
 			 
 			
 			//Espera o tempo atual ser igual ao tempo de espera
 			while(tempoAtual < tempoEspera){
 				//Esperando os segundos antes de chamar novamente a funcao
-				tempoAtual = remoteObjectClient.tempoSegundos();	
+				tempoAtual = tempoSegundos();	
 			}
 					
 			//Escrevendo dados no arquivo de log
-			remoteObjectClient.escreveString(contadorExecucao, tempoEspera, tempoProcessamento, resultado);
+			escreveString(contadorExecucao, tempoEspera, tempoProcessamento, resultado);
 			
 			//contando o numero da chamada
 			contadorExecucao++;
@@ -157,7 +163,7 @@ public class RemoteObjectClient {
 		} //fim while
 		
 		//Fechando o arquivo
-		remoteObjectClient.terminoEscrita();
+		terminoEscrita();
 		
 		//Avisando ao usuario o final do projeto
 		System.out.println("THE END!");

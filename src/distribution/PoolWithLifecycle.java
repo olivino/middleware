@@ -75,6 +75,7 @@ public class PoolWithLifecycle
                     while (queue.isEmpty()) {
                     	if (elapsedTime > lifeCycleTime){
                     		queue.notify();
+                    		threads.remove(this);
                     		return;
                     	}
                         try
