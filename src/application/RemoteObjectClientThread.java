@@ -44,11 +44,11 @@ public class RemoteObjectClientThread implements Runnable {
 		}
 		
 		totalTime = System.nanoTime() - startTime;
-		totalTime *= 10E6; 
+		totalTime /= 10E6; 
 		
 		synchronized (fw) {
 			try {
-				fw.write(index+"#"+poissonNumber+"#"+totalTime+"#"+result);
+				fw.write(index+"#"+poissonNumber+"#"+totalTime+"#"+result+"\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

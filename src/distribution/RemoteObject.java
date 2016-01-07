@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 public class RemoteObject implements IRemoteObject{
 	
 	private static final long serialVersionUID = 1L;
-	private static long wait_time;
+	private static long wait_time = 10;
 	
 	public RemoteObject () throws RemoteException  {
 		super();

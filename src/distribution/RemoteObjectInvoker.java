@@ -15,12 +15,17 @@ public class RemoteObjectInvoker {
 		PoolWithLifecycle poolWithLifecycle = new PoolWithLifecycle(2,1000000);
 		
 		System.out.println("start Loop");
+		
+		//set time
+		RemoteObject Robj = new RemoteObject();
+		Robj.setWait_time(500);
+		
 		// inversion loop
 		while (true) {
 
 			// @ Receive Message
 			msgToBeUnmarshalled = srh.receive();
-			System.out.println("recebida solicitacao para objetoRemoto");
+			//System.out.println("recebida solicitacao para objetoRemoto");
 			
 			ThreadedRemoteObjectInvolker threadedRemoteObjectInvolker = new ThreadedRemoteObjectInvolker(srh, msgToBeUnmarshalled);
 			

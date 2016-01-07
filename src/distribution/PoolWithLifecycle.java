@@ -1,4 +1,6 @@
 package distribution;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,14 +11,19 @@ public class PoolWithLifecycle
     private final ArrayList<PoolWorker> threads;
     private final LinkedList queue;
     private final long lifeCycleTime;
-
-    public PoolWithLifecycle(int nThreads, long lifeCycleTime)
+    
+    private FileWriter log;
+    
+    public PoolWithLifecycle(int nThreads, long lifeCycleTime) throws IOException
     {
     	this.lifeCycleTime = lifeCycleTime;
         this.nThreads = nThreads;
         queue = new LinkedList();
         threads = new ArrayList<PoolWorker>();
-
+        this.log = new FileWriter("logServer.txt",true);
+        log.write("poolSize#queueSizer\n");
+        log.close();
+        
         for (int i=0; i< nThreads; i++) {
         	PoolWorker onePoolWorker = new PoolWorker();
             threads.add(onePoolWorker);
@@ -39,10 +46,10 @@ public class PoolWithLifecycle
     	}
     }
 
-    public void execute(Runnable r) {
+    public void execute(Runnable r) throws IOException {
 
         synchronized(queue) {
-        	int poolSize = threads.size(); 
+        	int poolSize = threads.size();         	
         	if( poolSize == 0){
         		this.addMoreThreads(nThreads);
         	}
@@ -51,6 +58,11 @@ public class PoolWithLifecycle
         	}
             queue.addLast(r);
             queue.notify();
+            
+            this.log = new FileWriter("logServer.txt",true);
+            log.write(threads.size()+"#"+queue.size()+"\n");
+            log.close();
+            
         }
     }
 
