@@ -44,7 +44,7 @@ public class RemoteObjectClientThread implements Runnable {
 		}
 		
 		totalTime = System.nanoTime() - startTime;
-		totalTime /= 10E6; 
+		totalTime /= 1E6;
 		
 		synchronized (fw) {
 			try {

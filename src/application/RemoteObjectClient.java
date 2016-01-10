@@ -27,10 +27,10 @@ public class RemoteObjectClient {
 	/*Nao tem construtor*/
 	
 	//Variavei global - o define a quantidade deexecu��es do programa
-	public static final int finalExecucao = 1000;
+	public static final int finalExecucao = 300;
 	
 	/*Variaveis do Calculo estatistico - Poisson */
-	static RandomEngine engine = new DRand(100);
+	static RandomEngine engine = new DRand(111);
 	static int lambda = 10;
 	static Poisson poisson = new Poisson(lambda, engine);
 	
@@ -43,22 +43,11 @@ public class RemoteObjectClient {
 	public static void main(String[] args)throws UnknownHostException,
 	IOException, Throwable {
 
-		// create an instance of Naming Service
-		NamingProxy namingService = new NamingProxy("localhost", 1313);
-
-		// check registered services
-		System.out.println(namingService.list());
-
-		// look for Calculator in Naming service
-		RemoteObjectProxy remoteObjectProxy = (RemoteObjectProxy) namingService.lookup("RemoteObject");
-
 		//Variaveis utilizadas para armazenar os valores
 		long tempoEspera;
 		long tempoAtual;
 		long timeNano;
 		int contadorExecucao = 0;
-		long tempoProcessamento;
-		String resultado;
 		int poissonNumber;
 		
 		//Avisando ao usuario que o processamento comecou
@@ -67,7 +56,7 @@ public class RemoteObjectClient {
 		//Variaveis utilizadas para a manipulacao do arquivo
 		
 		log = new FileWriter(logFilePath);
-		log.write("index#poissonNumber#totalTime#result\n");
+		log.write("index#poissonNumber#totalTime#result#serverProcessingTime\n");
 		
 		//Criando thread do cliente
 		
@@ -79,7 +68,7 @@ public class RemoteObjectClient {
 			
 			poissonNumber = poisson.nextInt();
 			System.out.println(poissonNumber);
-			tempoEspera = (long) (poissonNumber * 10E6);
+			tempoEspera = (long) (poissonNumber * 1E6);
 			tempoAtual =  System.nanoTime() - timeNano;
 			
 			while(tempoEspera > tempoAtual){

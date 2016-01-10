@@ -12,13 +12,13 @@ public class RemoteObjectInvoker {
 		byte[] msgToBeUnmarshalled = null;
 
 		// create a pool with lifecycle  (initial thread number, life time of a thread)
-		PoolWithLifecycle poolWithLifecycle = new PoolWithLifecycle(2,1000000);
+		PoolWithLifecycle poolWithLifecycle = new PoolWithLifecycle(2,10000000);
 		
 		System.out.println("start Loop");
 		
 		//set time
 		RemoteObject Robj = new RemoteObject();
-		Robj.setWait_time(500);
+		Robj.setWait_time(10);
 		
 		// inversion loop
 		while (true) {
@@ -30,6 +30,8 @@ public class RemoteObjectInvoker {
 			ThreadedRemoteObjectInvolker threadedRemoteObjectInvolker = new ThreadedRemoteObjectInvolker(srh, msgToBeUnmarshalled);
 			
 			poolWithLifecycle.execute(threadedRemoteObjectInvolker);
+			
+			srh = new ServerRequestHandler(clientProxy.getPort());
 			
 		}
 	}

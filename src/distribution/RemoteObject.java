@@ -1,6 +1,11 @@
 package distribution;
 
 import java.rmi.RemoteException;
+import java.util.Random;
+
+import cern.jet.random.Poisson;
+import cern.jet.random.engine.DRand;
+import cern.jet.random.engine.RandomEngine;
 
 public class RemoteObject implements IRemoteObject{
 	
@@ -23,15 +28,22 @@ public class RemoteObject implements IRemoteObject{
 
 
 	public String doSomeThing(){
-		
+		int poissonValue = 0;
 		try {
-			Thread.sleep(wait_time);
+			/*Variaveis do Calculo estatistico - Poisson */
+			Random rand = new Random(System.nanoTime());
+			RandomEngine engine = new DRand(rand.nextInt());
+			int lambda = (int)wait_time;
+			Poisson poisson = new Poisson(lambda, engine);
+			poissonValue = poisson.nextInt();
+			Thread.sleep(poissonValue);
+			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			return "processing not completed";
 		}
 		
-		return "processing completed";
+		return "processing completed using#"+ poissonValue;
 
 
 	}

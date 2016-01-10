@@ -13,6 +13,8 @@ public class PoolWithLifecycle
     private final long lifeCycleTime;
     
     private FileWriter log;
+    private FileWriter logThreadtask;
+    private int createdTotal;
     
     public PoolWithLifecycle(int nThreads, long lifeCycleTime) throws IOException
     {
@@ -21,8 +23,14 @@ public class PoolWithLifecycle
         queue = new LinkedList();
         threads = new ArrayList<PoolWorker>();
         this.log = new FileWriter("logServer.txt",true);
-        log.write("poolSize#queueSizer\n");
+        log.write("poolSize#queueSizer#createdNow#createdTotal\n");
         log.close();
+        
+        this.logThreadtask = new FileWriter("logThreadTask.txt",true);
+        logThreadtask.write("threadWhoTakeTask\n");
+        logThreadtask.close();
+        
+        this.createdTotal = nThreads;
         
         for (int i=0; i< nThreads; i++) {
         	PoolWorker onePoolWorker = new PoolWorker();
@@ -47,20 +55,25 @@ public class PoolWithLifecycle
     }
 
     public void execute(Runnable r) throws IOException {
+    	int createdNow = 0;
 
         synchronized(queue) {
         	int poolSize = threads.size();         	
         	if( poolSize == 0){
         		this.addMoreThreads(nThreads);
+        		createdNow = nThreads;
         	}
         	else if (poolSize < queue.size() + poolSize*0.9){
-        		this.addMoreThreads(poolSize);
+        		this.addMoreThreads(nThreads);
+        		createdNow = nThreads;
         	}
             queue.addLast(r);
             queue.notify();
-            
+            if(createdNow > 0){
+            	createdTotal += nThreads;
+            }
             this.log = new FileWriter("logServer.txt",true);
-            log.write(threads.size()+"#"+queue.size()+"\n");
+            log.write(threads.size()+"#"+queue.size()+"#"+createdNow+"#"+createdTotal+"\n");
             log.close();
             
         }
@@ -79,7 +92,8 @@ public class PoolWithLifecycle
     	
         public void run() {
             Runnable r;
-
+            FileWriter logThreadtask;
+            
             while (true) {
                 synchronized(queue) {
                 	elapsedTime = System.nanoTime() - nanoTime;
@@ -100,6 +114,16 @@ public class PoolWithLifecycle
                     }
                     
                     r = (Runnable) queue.removeFirst();
+                    
+                    try {
+						logThreadtask = new FileWriter("logThreadTask.txt",true);
+						logThreadtask.write(this.getId()+"\n");
+	                    logThreadtask.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                    
                 }
 
                 // If we don't catch RuntimeException, 
