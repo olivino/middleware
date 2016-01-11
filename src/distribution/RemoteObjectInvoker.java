@@ -1,5 +1,8 @@
 package distribution;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import infrastructure.ServerRequestHandler;
@@ -11,14 +14,23 @@ public class RemoteObjectInvoker {
 				clientProxy.getPort());
 		byte[] msgToBeUnmarshalled = null;
 
+		// Get configuration from file
+		File configFile = new File("server.conf");
+		FileReader fileReader = new FileReader(configFile);
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		int processingTime = Integer.parseInt(bufferedReader.readLine());
+		int poolStartSize = Integer.parseInt(bufferedReader.readLine());
+		int lifeCycleTime = Integer.parseInt(bufferedReader.readLine());
+		fileReader.close();
 		// create a pool with lifecycle  (initial thread number, life time of a thread)
-		PoolWithLifecycle poolWithLifecycle = new PoolWithLifecycle(2,10000000);
+		PoolWithLifecycle poolWithLifecycle = new PoolWithLifecycle(poolStartSize,lifeCycleTime*1000000);
 		
-		System.out.println("start Loop");
 		
 		//set time
 		RemoteObject Robj = new RemoteObject();
-		Robj.setWait_time(10);
+		Robj.setWait_time(processingTime);
+		
+		System.out.println("start Loop");
 		
 		// inversion loop
 		while (true) {

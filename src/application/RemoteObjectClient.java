@@ -1,7 +1,9 @@
 package application;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -26,14 +28,6 @@ public class RemoteObjectClient {
 	
 	/*Nao tem construtor*/
 	
-	//Variavei global - o define a quantidade deexecu��es do programa
-	public static final int finalExecucao = 300;
-	
-	/*Variaveis do Calculo estatistico - Poisson */
-	static RandomEngine engine = new DRand(111);
-	static int lambda = 10;
-	static Poisson poisson = new Poisson(lambda, engine);
-	
 	//Variavel que calcula o tempo inicial de processamento
 	static long tempInicial;
 	static FileWriter log;
@@ -49,7 +43,20 @@ public class RemoteObjectClient {
 		long timeNano;
 		int contadorExecucao = 0;
 		int poissonNumber;
+	
+		File configFile = new File("client.conf");
+		FileReader fileReader = new FileReader(configFile);
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+				
+		//Variavei global - o define a quantidade deexecu��es do programa
+		int finalExecucao = Integer.parseInt(bufferedReader.readLine());
 		
+		/*Variaveis do Calculo estatistico - Poisson */
+		RandomEngine engine = new DRand(111);
+		int lambda = Integer.parseInt(bufferedReader.readLine());
+		Poisson poisson = new Poisson(lambda, engine);
+		
+		fileReader.close();
 		//Avisando ao usuario que o processamento comecou
 		System.out.println("Iniciando processamento!");
 
